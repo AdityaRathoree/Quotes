@@ -1,0 +1,47 @@
+/* CSS for styling quotes */
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 100px auto;
+  }
+  
+  .card {
+    width: 22rem;
+    margin: 15px;
+    background-color: #f8f9fa; /* Card background color */
+    border: 1px solid #ced4da; /* Border color */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .card-text {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  button {
+    padding: 8px 16px;
+    background-color: #343a40; /* Button background color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  button:hover {
+    background-color: #1e2124; /* Button hover color */
+  }
+  
