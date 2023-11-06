@@ -1,6 +1,7 @@
 const express = require('express')
 const db = require('../db')
 const router = express.Router()
+const utils = require('./utils')
 
 router.post('/create', (request, response) => {
   const req = request.body
@@ -9,18 +10,7 @@ router.post('/create', (request, response) => {
     `insert into quotes(user_id,text,author)
       values(${req.user_id},'${req.text}','${req.author}')`,
     (error, result) => {
-      if(error==null)
-      {
-          var data = JSON.stringify(result) 
-          response.setHeader("Content-Type","application/json");
-          response.send(data);
-      } 
-      else
-      {
-          console.log(error);
-          response.setHeader("Content-Type","application/json");
-          response.send(error)
-      }
+      response.send(utils.createResult(error, result))
     }
   )
 })
@@ -29,18 +19,7 @@ router.get('/getAllQuotes',(request, response) => {
     db.query(
       `select * from quotes`,
       (error, result) => {
-        if(error==null)
-        {
-            var data = JSON.stringify(result) 
-            response.setHeader("Content-Type","application/json");
-            response.send(data);
-        } 
-        else
-        {
-            console.log(error);
-            response.setHeader("Content-Type","application/json");
-            response.send(error)
-        }
+        response.send(utils.createResult(error, result));
       }
     )
   }
@@ -52,18 +31,7 @@ router.get('/getQuotesbyUser/:user_id',(request, response) => {
   db.query(
     `select * from quotes where user_id=?`,[user_id],
     (error, result) => {
-      if(error==null)
-      {
-          var data = JSON.stringify(result) 
-          response.setHeader("Content-Type","application/json");
-          response.send(data);
-      } 
-      else
-      {
-          console.log(error);
-          response.setHeader("Content-Type","application/json");
-          response.send(error)
-      }
+      response.send(utils.createResult(error, result))
     }
   )
 }
@@ -74,18 +42,7 @@ router.get('/getQuotesbyId/:user_id/:id',(request, response) => {
   db.query(
     `select * from quotes where user_id=? and id=?`,[request.params.user_id,request.params.id],
     (error, result) => {
-      if(error==null)
-      {
-          var data = JSON.stringify(result) 
-          response.setHeader("Content-Type","application/json");
-          response.send(data);
-      } 
-      else
-      {
-          console.log(error);
-          response.setHeader("Content-Type","application/json");
-          response.send(error)
-      }
+      response.send(utils.createResult(error, result))
     }
   )
 }
@@ -98,17 +55,7 @@ router.put('/updateQuotes',(request, response) => {
     `update quotes set text=?, author=? where user_id=? and id=?`,[cred.text,cred.author,cred.user_id,cred.id],
     (error, result) => {
       if(error==null)
-      {
-          var data = JSON.stringify(result) 
-          response.setHeader("Content-Type","application/json");
-          response.send(data);
-      } 
-      else
-      {
-          console.log(error);
-          response.setHeader("Content-Type","application/json");
-          response.send(error)
-      }
+      response.send(utils.createResult(error, result))
     }
   )
 }
@@ -119,18 +66,7 @@ router.delete('/deleteQuotes/:user_id/:id',(request, response) => {
   db.query(
     `delete from quotes where user_id=? and id=?`,[request.params.user_id, request.params.id],
     (error, result) => {
-      if(error==null)
-      {
-          var data = JSON.stringify(result) 
-          response.setHeader("Content-Type","application/json");
-          response.send(data);
-      } 
-      else
-      {
-          console.log(error);
-          response.setHeader("Content-Type","application/json");
-          response.send(error)
-      }
+      response.send(utils.createResult(error, result))
     }
   )
 }

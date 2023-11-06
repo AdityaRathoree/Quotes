@@ -18,7 +18,7 @@ function MyQuotes(){
           console.log(response)
         // if(response && response.status === 200){
         // console.log(response.data);
-        setMyQuotes(response.data);
+        setMyQuotes(response.data.data);
         // }
         }
 
@@ -36,7 +36,7 @@ function MyQuotes(){
             let response = await delQuote(e);
           // if(response && response.status === 200){
           console.log("Delete Quotes")
-          console.log(response);
+          console.log(response.data);
           navigate('/home');
           // setQuotes(response.data);
           // }
@@ -45,10 +45,10 @@ function MyQuotes(){
 
     return (
         <>
-<NavigationBar/>
+{/* <NavigationBar/> */}
 <div className="row flex flex-wrap justify-content-center" style={{margin:"100px"}}> 
- {myquotes.map(b=>
-<div key={b.id}className="card" style={{ width: "22rem", margin:"15px"}}>
+ {myquotes.map((b,index)=>
+<div key={index}className="card" style={{ width: "22rem", margin:"15px"}}>
   <div className="card-body">
     <h5 className="card-title">{b.id}</h5>
     <p className="card-text">{b.text}</p>

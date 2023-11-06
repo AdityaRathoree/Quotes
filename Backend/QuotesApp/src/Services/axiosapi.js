@@ -86,3 +86,8 @@ export async function unlikeQuotes(quote_id){
     console.log("yo user_id: "+user_id +" id: "+quote_id);
     return await handleRequest(()=>axiosInstance.delete(`/favquotes/deleteFavQuotes/${user_id}/${quote_id}`))
 }
+
+//LIKES COUNT
+export async function likesCount(){
+    return await handleRequest(()=>axiosInstance.get("/favquotes/likescount"));
+}

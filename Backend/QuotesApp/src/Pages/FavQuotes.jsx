@@ -16,8 +16,8 @@ function FavQuotes(){
             const id = sessionStorage.getItem("id");
           let response = await getFavQuotesById(id);
         // if(response && response.status === 200){
-        console.log(response.data);
-        setFavQuotes(response.data);
+        console.log(response.data.data);
+        setFavQuotes(response.data.data);
         // }
         }
 
@@ -34,11 +34,11 @@ function FavQuotes(){
 
     return (
         <>
-<NavigationBar/>
+{/* <NavigationBar/> */}
 <div className="row flex flex-wrap justify-content-center" style={{margin:"100px"}}> 
 <h1>Favourite Quotes</h1>
- {favquotes.map(b=>
-<div key={b.id} className="card" style={{ width: "22rem", margin:"15px"}}>
+ {favquotes.map((b,index)=>
+<div key={index} className="card" style={{ width: "22rem", margin:"15px"}}>
   <div className="card-body">
     <h5 className="card-title">{b.id}</h5>
     <p className="card-text">{b.text}</p>

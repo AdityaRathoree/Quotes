@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import React,{useState} from 'react';
 import { addQuote } from "../Services/axiosapi";
 import { Link,useNavigate } from "react-router-dom";
-import './AddQuote.css';
+// import './AddQuote.css';
 import NavigationBar from "./NavigationBar";
 
 function AddQuote(){
@@ -27,7 +27,7 @@ function AddQuote(){
 
     return(
         <>
-        <NavigationBar/>
+        {/* <NavigationBar/> */}
         <div id="" style={{margin:"100px", justifyContent: 'center', textAlign: 'center' }}>
          <div className="col-12 justify-content-center">
       <h1>Add Quotes</h1>

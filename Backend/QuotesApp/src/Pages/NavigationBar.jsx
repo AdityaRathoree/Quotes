@@ -84,10 +84,21 @@
 // export default NavigationBar;
 
 
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+
 
 function NavigationBar() {
   const Navigate = useNavigate();
+
+  const[isLoggedIn,setIsLoggedIn] = useState(false);
+
+useEffect(()=>{
+  if(sessionStorage.getItem('token')){
+    setIsLoggedIn(true);
+  }
+})
 
   const addQuote = () => {
     Navigate("/addquotes");
@@ -108,6 +119,8 @@ function NavigationBar() {
     sessionStorage.removeItem("lname");
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("id");
+    sessionStorage.removeItem("token");
+    setIsLoggedIn(false);
     Navigate("/");
   };
 
@@ -131,12 +144,23 @@ function NavigationBar() {
             <button className="nav-link" onClick={favQuote} style={{ backgroundColor: "transparent", color:"white",border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Favourite Quotes</button>
           </li>
         </ul>
-        <div className="navbar-nav">
-          <button className="nav-item nav-link" onClick={logoutUser} style={{ backgroundColor: "transparent",color:"white", border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Log out</button>
-        </div>
+        {isLoggedIn?
+        <ul className="navbar-nav d-flex ms-auto order-5">
+          <li className="nav-item">
+          <Link className="nav-link" style={{ backgroundColor: "transparent", color:"white",border: "none" }} to='/profile'>Profile</Link>
+          </li>
+          <li className="nav-item">
+          {/* <Link className="nav-link" style={{ backgroundColor: "transparent", color:"white",border: "none" }} to='/'>Logout</Link> */}
+          <button className="nav-link" style={{ backgroundColor: "transparent", color:"white",border: "none" }} onClick={()=>logoutUser()}>Logout</button>
+          </li>
+        </ul>:""
+      }
+        {/* <div className="navbar-nav">
+        <button className="nav-item nav-link" onClick={logoutUser} style={{ backgroundColor: "transparent",color:"white", border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Log out</button>
+      </div> */}
       </div>
-    </nav>
-  );
+      </nav>
+      );
 }
 
 export default NavigationBar;

@@ -1,64 +1,68 @@
 import { Link } from "react-router-dom";
 // import "./Home.css";
-import { getAllQuotes } from "../Services/axiosapi";
+import { getAllQuotes,likesCount } from "../Services/axiosapi";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavigationBar from "./NavigationBar";
 import { likeQuotes } from "../Services/axiosapi";
+import { Button } from "@mui/material";
+import { Favorite, FavoriteBorderTwoTone, FavoriteRounded } from "@mui/icons-material";
 
 function Home() {
   const [quotes, setQuotes] = useState([]);
-  // const [color, setColor] = useState('blue');
+  const [likesCnt, setLikesCnt] = useState();
   const Navigate = useNavigate();
 
   useEffect(() => {
     loadBlogs();
+    // loadLikesCount();
   }, []);
 
   const loadBlogs = async () => {
     let response = await getAllQuotes();
     // if(response && response.status === 200){
-    console.log(response.data);
-    setQuotes(response.data);
+    console.log(response.data.data);
+    setQuotes(response.data.data);
     // }
   };
+
+  // const loadLikesCount = async () => {
+  //   let response = await likesCount();
+  //   // if(response && response.status === 200){
+  //   console.log(response.data);
+  //   setLikesCnt(response.data);
+  //   // }
+  // };
 
   const like = async (e) => {
     let response = await likeQuotes(e);
     // if(response && response.status === 200){
     console.log(response);
+    loadBlogs();
     // setQuotes(response.data);
     // }
   };
 
   return (
-    <div style={{ backgroundColor:"#F5F5F5"}}>
-      <NavigationBar />
-      <div
-        className="row flex flex-wrap justify-content-center"
-        style={{ margin: "100px"}}>
-          <h1 style={{color:"#FF6347"}}>Quotes Dashboard</h1>
-        {quotes.map((b) => (
-          <div key={b.id} className="card" style={{ backgroundColor:"#20B2AA",width: "22rem", margin: "15px" }}>
-            <div className="card-body">
-              {/* <h5 className="card-title">{b.id}</h5> */}
-              {/* <h4 className="card-text">Quote : </h4> */}
-              <h3 className="card-text" style={{color:"#FFD700"}}>
-                <i>{b.text}</i>
-              </h3>
-              <h6 className="card-text">
-                <i>- By {b.author}</i>
-              </h6>
-              <p className="card-text" style={{color:"#2F4F4F", fontSize: "small" }}>
-                created at : {new Date(b.createdDate).toLocaleDateString()}
-              </p>
-              <button
+    <div style={{backgroundColor:"F6F6F2"}}>
+          <h1 style={{color:"white"}}>Quotes</h1>
+<div style={{paddingBottom:"100px"}}>
+      <div className="row flex flex-wrap justify-content-center" >
+      {quotes.map((b,index) => (
+      <div key={index} className="card" style={{"width": "22rem", backgroundColor:"#BADFE7", margin: "15px" }}>
+  <ul className="card-body">
+    <p className="card-text" style={{color:"#388087"}}>Category</p>
+    <p className="card-text" style={{color:"#388087"}}> <i>{b.text}</i></p>
+    <p className="card-text" style={{color:"#388087"}}>- By {b.author}</p>
+  </ul>
+  <ul className="footer" style={{backgroundColor:"#BADFE7", color:"#6F63AD" }}>
+  <div>
+  <Button variant='contained' startIcon={<FavoriteRounded/>}
                 style={{
-                  position: "relative",
-                  marginTop: "5px",
                   marginRight: "5px",
-                  backgroundColor:"#1E90FF",
-                  border:"#1E90FF"
+                  marginLeft:"-30px",
+                  backgroundColor:"#DC143C",
+                  border:"#DC143C"
                 }}
                 value={b.id}
                 className="btn btn-dark"
@@ -67,11 +71,17 @@ function Home() {
                   // setColor('grey');
                   like(e.target.value)}}
               >
-                Like
-              </button>
-            </div>
-          </div>
-        ))}
+               {b.likescount}
+              </Button>
+              {/* <p className="nav d-flex ms-auto order-7" style={{position:"absolute", fontSize:"12px", marginRight:"40px", marginBottom:"10"}}>
+  {new Date(b.createdDate).getDay()} days ago
+  </p> */}
+              </div>
+  </ul>
+  
+</div>
+   ))}
+</div>
       </div>
     </div>
   );

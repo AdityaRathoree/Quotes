@@ -4,6 +4,8 @@ import { toast } from 'react-toastify';
 import { useState } from 'react'
 import { loginApi } from '../Services/axiosapi';
 import { Link, useNavigate } from 'react-router-dom'
+import { Button } from '@mui/material';
+import { LoginOutlined, LoginSharp, LoginTwoTone } from '@mui/icons-material';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -13,19 +15,21 @@ function Login() {
  
   const loginUser = async () => {
     if (email.length == '') {
-      toast.error('Please enter email');
+      toast.error('Please enter email', {className: 'custom-progress-bar'});
     } else if (password.length == '') {
       toast.error('Please enter password');
     } else {
       const response = await loginApi(email, password)
-console.log(response.data[0].id);
-      if (response.data[0].id >= 1) {
-        const fname = response.data[0].firstName;
-        const lname = response.data[0].lastName;
-        sessionStorage['fname'] = response.data[0].firstName;
-        sessionStorage['lname'] = response.data[0].lastName;
-        sessionStorage['email'] = response.data[0].email;
-        sessionStorage['id'] = response.data[0].id;
+      console.log("Login Response");
+      console.log(response.data);
+      if (response.data.status == "success") {
+        const fname = response.data.data.firstName;
+        const lname = response.data.data.lastName;
+        sessionStorage['fname'] = response.data.data.firstName;
+        sessionStorage['lname'] = response.data.data.lastName;
+        sessionStorage['email'] = response.data.data.email;
+        sessionStorage['id'] = response.data.data.id;
+        sessionStorage['token'] = response.data.data.token;
         toast.success(`Welcome,${fname+' '}${lname} to QuoteVerse`)
         navigate('/home');
       } else {
@@ -35,13 +39,13 @@ console.log(response.data[0].id);
   }
 
   return (
-    <MDBContainer className="my-5">
+    <MDBContainer className="my-5" style={{width:800}} >
 
-      <MDBCard>
+      <MDBCard >
         <MDBRow className='g-0'>
 
-          <MDBCol md='6'>
-            <MDBCardImage src='https://c1.wallpaperflare.com/preview/652/531/737/wood-aerial-background-beverage.jpg' alt="login form" style={{height:"100%"}} className='rounded-start w-100'/>
+          <MDBCol md='5 w-50'>
+            <MDBCardImage src='http://localhost:3000/assets/login.jpg' alt="login form" style={{height:"100%"}} className='rounded-start w-100'/>
           </MDBCol>
 
           <MDBCol md='6'>
@@ -59,8 +63,8 @@ console.log(response.data[0].id);
                 <MDBInput  onChange={(e) => {
                   setPassword(e.target.value)}} wrapperClass='mb-4' label='Password' id='formControlLg' type='password' size="lg"/>
 
-              <MDBBtn onClick={loginUser} className="mb-4 px-5" color='dark' size='lg'>Login</MDBBtn>
-              <a className="small text-muted" href="#!">Forgot password?</a>
+              <Button onClick={loginUser} variant='contained' color='success' endIcon={<LoginOutlined/>}>Login </Button>
+              {/* <a className="small text-muted" href="#!">Forgot password?</a> */}
               <p className="mb-5 pb-lg-2" style={{color: '#393f81'}}>Don't have an account? <Link to="/Register" style={{color: '#393f81'}}>Register here</Link></p>
 
               <div className='d-flex flex-row justify-content-start'>

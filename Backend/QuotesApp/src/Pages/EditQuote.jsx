@@ -28,8 +28,8 @@ function EditQuote(){
       let response = await getQuoteById(id);
       // if(response && response.status === 200){
       // console.log(response.data[0].text);
-      setQuote(response.data[0].text)
-      setAuthor(response.data[0].author)
+      setQuote(response.data.data[0].text)
+      setAuthor(response.data.data[0].author)
       // }
     };
 
@@ -37,7 +37,7 @@ function EditQuote(){
         let response = await editQuote(quote,author,id);
 
         console.log(response);
-        if (response.data.affectedRows >= 1) {
+        if (response.data.data.affectedRows >= 1) {
           toast.success(`Quote Edited Succesfully!!!`)
           navigate('/home');
         } else {
@@ -47,7 +47,7 @@ function EditQuote(){
 
     return(
         <>
-        <NavigationBar/>
+        {/* <NavigationBar/> */}
         <div id="" style={{margin:"100px", justifyContent: 'center', textAlign: 'center' }}>
          <div className="col-12 justify-content-center">
       <h1>Edit Quotes</h1>

@@ -31,8 +31,9 @@ function Register() {
             toast.error('Please enter password');
           } else {
           const response = await registerApi(email,firstName,lastName,contactNo,password)
-    console.log(response.data.affectedRows);
-          if (response.data.affectedRows>= 1) {
+          console.log(response);
+          console.log(response.data.data.affectedRows);
+          if (response.data.data.affectedRows>= 1) {
             toast.success(`User Registered Successfully`)
             navigate('/');
           } else {

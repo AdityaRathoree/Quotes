@@ -18,11 +18,14 @@ CREATE TABLE user(
 CREATE TABLE quotes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
-    text VARCHAR(100),
+    text VARCHAR(10000),
     author VARCHAR(100),
     createdDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    likescount INT DEFAULT 0,
     Foreign Key (user_id) references user(id)
 );
+
+
 
 CREATE TABLE Favquotes (
     user_id INT,
@@ -60,6 +63,10 @@ VALUES (1, 'In the middle of every difficulty lies opportunity.', 'Albert Einste
        (5, 'The best way to predict the future is to create it.', 'Peter Drucker');
 
 
+ALTER TABLE quotes
+MODIFY text VARCHAR(10000);
 
+ALTER TABLE quotes
+ADD likescount INT DEFAULT 0;
 
 
