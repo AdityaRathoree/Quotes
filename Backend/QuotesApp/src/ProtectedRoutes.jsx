@@ -1,5 +1,3 @@
-import { Link,Switch, Route } from "react-router-dom";
-import Login from "./Pages/Login"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -17,8 +15,6 @@ return (
     <div>
         <Component/>
     </div>
-)
-
-}
+)};
 
 export default ProtectedRoutes

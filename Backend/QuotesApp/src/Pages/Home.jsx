@@ -1,32 +1,85 @@
-import { Link } from "react-router-dom";
 // import "./Home.css";
-import { getAllQuotes,likesCount } from "../Services/axiosapi";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import NavigationBar from "./NavigationBar";
-import { likeQuotes } from "../Services/axiosapi";
+import { likeQuotes,getAllQuotes,getFavQuotesById,unlikeQuotes } from "../Services/axiosapi";
 import { Button } from "@mui/material";
-import { Favorite, FavoriteBorderTwoTone, FavoriteRounded } from "@mui/icons-material";
+import { FavoriteRounded } from "@mui/icons-material";
 
 function Home() {
   const [quotes, setQuotes] = useState([]);
   const [likesCnt, setLikesCnt] = useState();
-  const Navigate = useNavigate();
+  const [favquotes, setFavQuotes] = useState([]);
+  const [onlyquotes, setOnlyQuotes] = useState([]);
+  const [color, setColor] = useState([]);
 
   useEffect(() => {
     loadBlogs();
-    // loadLikesCount();
-  }, []);
+    loadLikesCount();
+  } ,[]);
+
+  useEffect(() => {
+    setOnlyQuotes(favquotes.map(e=>e.quote_id))
+  }, [favquotes]);
+
+  useEffect(() => {
+    const updatecolors = quotes.map(e=>{
+          if(onlyquotes.includes(e.id)){
+          return{id:e.id,
+                 flag:true
+                };
+              }
+          else{
+            return {
+            id:e.id,
+            flag:false
+            };
+          }
+      });
+      setColor(updatecolors);
+   
+    },[onlyquotes,quotes]);
+
+    useEffect(() => {
+    }, [color]);
+  
+
 
   const loadBlogs = async () => {
     let response = await getAllQuotes();
-    // if(response && response.status === 200){
-    console.log(response.data.data);
     setQuotes(response.data.data);
-    // }
   };
 
-  // const loadLikesCount = async () => {
+  const loadLikesCount = async () => {
+    const id = sessionStorage.getItem("id");
+          let response = await getFavQuotesById(id);
+        setFavQuotes(response.data.data);
+  };
+
+  const unlike = async (e) => {
+    let response = await unlikeQuotes(e);
+    console.log(response);
+    loadBlogs();
+    loadLikesCount();
+  };
+
+  const toggle = async (e)=>{
+    console.log("TOGGLE CHECKING");
+    console.log(e);
+    await color.map(a=>{
+      if ( a.id==e && a.flag == false ) {
+        console.log("inside if false")
+        like(e);
+        a.flag=true;
+      }
+      else if(a.id==e && a.flag == true){
+        console.log("INSIDE else if true")
+        unlike(e);
+        a.flag=false;
+      }
+    })    
+    };
+  
+
+   // const loaduserlikes = async () => {
   //   let response = await likesCount();
   //   // if(response && response.status === 200){
   //   console.log(response.data);
@@ -39,40 +92,61 @@ function Home() {
     // if(response && response.status === 200){
     console.log(response);
     loadBlogs();
+    loadLikesCount();
     // setQuotes(response.data);
     // }
   };
 
   return (
-    <div style={{backgroundColor:"F6F6F2"}}>
+    <div style={{backgroundColor:"#F6F6F2"}}>
           <h1 style={{color:"white"}}>Quotes</h1>
 <div style={{paddingBottom:"100px"}}>
       <div className="row flex flex-wrap justify-content-center" >
       {quotes.map((b,index) => (
       <div key={index} className="card" style={{"width": "22rem", backgroundColor:"#BADFE7", margin: "15px" }}>
   <ul className="card-body">
-    <p className="card-text" style={{color:"#388087"}}>Category</p>
-    <p className="card-text" style={{color:"#388087"}}> <i>{b.text}</i></p>
-    <p className="card-text" style={{color:"#388087"}}>- By {b.author}</p>
+    <p className="card-text" style={{ paddingLeft:"5px",borderRadius:"5px ",backgroundColor:"#00DF9F" ,border:"2px solid #00DF9F", width:"230px",height:"30px", color:"#000000"}}>{b.category}</p>
+    <p className="card-text" style={{color:"#388087",fontWeight:"bold"}}> {b.text}</p>
+    <p className="card-text" style={{color:"#388087",fontFamily:"serif"}}><i>- By {b.author}</i></p>
   </ul>
   <ul className="footer" style={{backgroundColor:"#BADFE7", color:"#6F63AD" }}>
   <div>
-  <Button variant='contained' startIcon={<FavoriteRounded/>}
+  {onlyquotes.includes(b.id) ?
+  (<Button variant='contained' startIcon={<FavoriteRounded/>}
                 style={{
                   marginRight: "5px",
                   marginLeft:"-30px",
                   backgroundColor:"#DC143C",
-                  border:"#DC143C"
+                  border:"#DC143C",
+                  width:45,
+                  height:45,
+                  borderRadius:'30%'
                 }}
                 value={b.id}
                 className="btn btn-dark"
                 onClick={(e) => {
                   // e.target.backgroundColor='grey'
                   // setColor('grey');
-                  like(e.target.value)}}
-              >
+                  toggle(e.target.value)}}>
                {b.likescount}
-              </Button>
+              </Button>)
+
+              :(<Button variant='contained' startIcon={<FavoriteRounded/>}
+                style={{
+                  marginRight: "5px",
+                  marginLeft:"-30px",
+                  backgroundColor:"#3CB371",
+                  border:"#DC143C",
+                  width:45,
+                  height:45,
+                  borderRadius:'30%',
+                }}
+                value={b.id}
+                className="btn btn-dark"
+                onClick={(e) => {
+                  toggle(e.target.value)}}>
+               {b.likescount}
+              </Button>)}
               {/* <p className="nav d-flex ms-auto order-7" style={{position:"absolute", fontSize:"12px", marginRight:"40px", marginBottom:"10"}}>
   {new Date(b.createdDate).getDay()} days ago
   </p> */}

@@ -1,0 +1,56 @@
+.careers {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f7f7f7;
+  }
+  
+  .careers-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .careers-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+  }
+  
+  .careers-content {
+    text-align: center;
+  }
+  
+  .opportunities-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .opportunities-list li {
+    margin-bottom: 20px;
+  }
+  
+  .opportunities-list strong {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .opportunities-list p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .btn:hover {
+    background-color: #555;
+  }
+  

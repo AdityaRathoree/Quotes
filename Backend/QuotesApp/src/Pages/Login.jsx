@@ -1,11 +1,11 @@
 import React from 'react';
-import {MDBBtn,MDBContainer,MDBCard,MDBCardBody,MDBCardImage,MDBRow,MDBCol,MDBIcon,MDBInput} from 'mdb-react-ui-kit';
+import {MDBContainer,MDBCard,MDBCardBody,MDBCardImage,MDBRow,MDBCol,MDBIcon,MDBInput} from 'mdb-react-ui-kit';
 import { toast } from 'react-toastify';
 import { useState } from 'react'
 import { loginApi } from '../Services/axiosapi';
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@mui/material';
-import { LoginOutlined, LoginSharp, LoginTwoTone } from '@mui/icons-material';
+import { LoginOutlined } from '@mui/icons-material';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -14,20 +14,22 @@ function Login() {
   const navigate = useNavigate();
  
   const loginUser = async () => {
-    if (email.length == '') {
+    if (email.length === '') {
       toast.error('Please enter email', {className: 'custom-progress-bar'});
-    } else if (password.length == '') {
+    } else if (password.length === '') {
       toast.error('Please enter password');
     } else {
       const response = await loginApi(email, password)
       console.log("Login Response");
-      console.log(response.data);
-      if (response.data.status == "success") {
+      console.log(response);
+      if (response.data.status === "success") {
         const fname = response.data.data.firstName;
         const lname = response.data.data.lastName;
         sessionStorage['fname'] = response.data.data.firstName;
         sessionStorage['lname'] = response.data.data.lastName;
         sessionStorage['email'] = response.data.data.email;
+        sessionStorage['contactNo'] = response.data.data.contactNo;
+        sessionStorage['createdDate'] = response.data.data.createdDate;
         sessionStorage['id'] = response.data.data.id;
         sessionStorage['token'] = response.data.data.token;
         toast.success(`Welcome,${fname+' '}${lname} to QuoteVerse`)
@@ -53,7 +55,9 @@ function Login() {
 
               <div className='d-flex flex-row mt-2'>
                 <MDBIcon fas icon="cubes fa-3x me-3" style={{ color: '#ff6219' }}/>
-                <span className="h1 fw-bold mb-0">QuoteVerse</span>
+                <span className="h1 fw-bold mb-0" 
+                style={{color:"linear-gradient(90deg, rgba(131,58,180,1) 0%, rgba(129,230,50,1) 45%, rgba(252,176,69,1) 88%)"}}
+                >QuoteVerse</span>
               </div>
 
               <h5 className="fw-normal my-4 pb-3" style={{letterSpacing: '1px'}}>Sign into your account</h5>

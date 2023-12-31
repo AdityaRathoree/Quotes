@@ -16,17 +16,81 @@ const utils = require('./utils')
 // }
 // )
 
+// router.delete("/deleteFavQuotes/:user_id/:quote_id", (request, response) => {
+//   db.query( 
+//     `START TRANSACTION;
+//     DELETE FROM Favquotes WHERE quote_id = ? AND user_id = ?,
+//     UPDATE quotes SET likescount = likescount - 1 WHERE id = ?,
+//     COMMIT;,`
+//     [request.params.quote_id, request.params.user_id,request.params.quote_id],
+//     (error, result) => {
+//       response.send(utils.createResult(error, result))
+//     }
+//   );
+// });
+
 router.delete("/deleteFavQuotes/:user_id/:quote_id", (request, response) => {
-  db.query( 
-    `START TRANSACTION;
-    DELETE FROM Favquotes WHERE quote_id = ? AND user_id = ?,
-    UPDATE quotes SET likescount = likescount - 1 WHERE id = ?,
-    COMMIT;,`
-    [request.params.quote_id, request.params.user_id,request.params.quote_id],
-    (error, result) => {
-      response.send(utils.createResult(error, result))
+  db.query("START TRANSACTION", (startTransactionError) => {
+    if (startTransactionError) {
+      console.log(startTransactionError);
+      response.setHeader("Content-Type", "application/json");
+      response.send(startTransactionError);
+      return;
     }
-  );
+
+    db.query(
+      "DELETE FROM Favquotes WHERE quote_id = ? AND user_id = ?",
+      [request.params.quote_id, request.params.user_id],
+      (deleteError, deleteResult) => {
+        if (deleteError) {
+          console.log(deleteError);
+          db.query("ROLLBACK", (rollbackError) => {
+            if (rollbackError) {
+              console.log("Rollback Error:", rollbackError);
+            }
+            response.setHeader("Content-Type", "application/json");
+            response.send(deleteError);
+          });
+          return;
+        }
+
+        db.query(
+          "UPDATE quotes SET likescount = likescount - 1 WHERE id = ?",
+          [request.params.quote_id],
+          (updateError, updateResult) => {
+            if (updateError) {
+              console.log(updateError);
+              db.query("ROLLBACK", (rollbackError) => {
+                if (rollbackError) {
+                  console.log("Rollback Error:", rollbackError);
+                }
+                response.setHeader("Content-Type", "application/json");
+                response.send(updateError);
+              });
+              return;
+            }
+
+            db.query("COMMIT", (commitError) => {
+              if (commitError) {
+                console.log("Commit Error:", commitError);
+                db.query("ROLLBACK", (rollbackError) => {
+                  if (rollbackError) {
+                    console.log("Rollback Error:", rollbackError);
+                  }
+                  response.setHeader("Content-Type", "application/json");
+                  response.send(commitError);
+                });
+                return;
+              }
+
+              response.setHeader("Content-Type", "application/json");
+              response.send("Successfully deleted and updated");
+            });
+          }
+        );
+      }
+    );
+  });
 });
 
 router.get("/getFavQuotes/:user_id", (request, response) => {

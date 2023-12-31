@@ -12,20 +12,28 @@ CREATE TABLE user(
     lastName VARCHAR(20),
     email VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(100),
-    contactNo VARCHAR(15)
+    contactNo VARCHAR(15),
+    profileImage VARCHAR(100),
+    createdDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE quotes (
     id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
+    category_id INT,
     text VARCHAR(10000),
     author VARCHAR(100),
     createdDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    editedDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     likescount INT DEFAULT 0,
-    Foreign Key (user_id) references user(id)
+    Foreign Key (user_id) references user(id),
+    Foreign Key (category_id) references category(id)
 );
 
-
+CREATE TABLE category (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category VARCHAR(100)
+);
 
 CREATE TABLE Favquotes (
     user_id INT,
@@ -69,4 +77,42 @@ MODIFY text VARCHAR(10000);
 ALTER TABLE quotes
 ADD likescount INT DEFAULT 0;
 
+ALTER TABLE quotes
+ADD category_id INT;
 
+
+
+INSERT INTO category (category) VALUES 
+('Love and Relationships'),
+('Success and Motivation'),
+('Wisdom and Knowledge'),
+('Nature and Beauty'),
+('Mindfulness and Well-being');
+
+INSERT INTO quotes (user_id, category_id, text, author)
+VALUES 
+(1, 1, 'The best thing to hold onto in life is each other.', 'Audrey Hepburn'),
+(1, 1, 'Love is composed of a single soul inhabiting two bodies.', 'Aristotle'),
+(2, 1, 'You don’t love someone for their looks, or their clothes, or for their fancy car, but because they sing a song only you can hear.', 'Oscar Wilde'),
+
+(1, 2, 'The only limit to our realization of tomorrow will be our doubts of today.', 'Franklin D. Roosevelt'),
+(2, 2, 'The only way to do great work is to love what you do.', 'Steve Jobs'),
+(3, 2, 'Success is not final, failure is not fatal: It is the courage to continue that counts.', 'Winston Churchill'),
+
+(1, 3, 'The only true wisdom is in knowing you know nothing.', 'Socrates'),
+(2, 3, 'Education is the most powerful weapon which you can use to change the world.', 'Nelson Mandela'),
+(3, 3, 'The more I read, the more I acquire, the more certain I am that I know nothing.', 'Voltaire'),
+
+(1, 4, 'The earth has music for those who listen.', 'Shakespeare'),
+(2, 4, 'In every walk with nature, one receives far more than he seeks.', 'John Muir'),
+(3, 4, 'The beauty of the natural world lies in the details.', 'Natalie Angier'),
+
+(1, 5, 'Happiness is not something ready-made. It comes from your own actions.', 'Dalai Lama'),
+(2, 5, 'The present moment is filled with joy and happiness. If you are attentive, you will see it.', 'Thich Nhat Hanh'),
+(3, 5, 'In today’s rush, we all think too much — seek too much — want too much — and forget about the joy of just being.', 'Eckhart Tolle');
+
+
+
+
+
+ select category.category,category.id,quotes.id, quotes.user_id, quotes.text,quotes.author,quotes.createdDate, quotes.editedDate,quotes.likescount from quotes join category on category.id=category.id;

@@ -15,20 +15,13 @@ function FavQuotes(){
         const loadFavQuotes = async () => {
             const id = sessionStorage.getItem("id");
           let response = await getFavQuotesById(id);
-        // if(response && response.status === 200){
-        console.log(response.data.data);
         setFavQuotes(response.data.data);
-        // }
         }
 
         const unlike = async (e) => {
           console.log("e:"+e);
           let response = await unlikeQuotes(e);
-          // if(response && response.status === 200){
-          console.log(response);
           navigate('/home');
-          // setQuotes(response.data);
-          // }
         };
 
 

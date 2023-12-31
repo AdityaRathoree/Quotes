@@ -12,6 +12,7 @@ const routerFavQuote = require('./Routes/favquotes')
 app.use(cors());
 
 app.use(express.json());
+app.use(express.static('uploads'));
 
 app.use((req,res,next)=>{
     console.log("server side done");
@@ -33,7 +34,7 @@ app.use((request, response, next) => {
         const payload = jwt.decode(token, config.secret)
   
         request.payload = payload
-  
+       console.log("NEXT");
         next()
       } catch (ex) {
         response.send('wrong token')

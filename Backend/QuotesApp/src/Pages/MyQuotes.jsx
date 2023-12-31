@@ -15,11 +15,7 @@ function MyQuotes(){
         const loadMyQuotes = async () => {
             const id = sessionStorage.getItem("id");
           let response = await getQuotesById(id);
-          console.log(response)
-        // if(response && response.status === 200){
-        // console.log(response.data);
         setMyQuotes(response.data.data);
-        // }
         }
 
         const edit = async (e) => {

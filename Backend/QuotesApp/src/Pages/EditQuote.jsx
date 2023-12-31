@@ -1,7 +1,7 @@
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 import React,{useState,useEffect} from 'react';
-import { getQuoteById,editQuote } from "../Services/axiosapi";
+import { getQuoteById,editQuote,getAllCategories } from "../Services/axiosapi";
 import { Link,useNavigate,Params, useParams } from "react-router-dom";
 import './AddQuote.css';
 import NavigationBar from "./NavigationBar";
@@ -10,6 +10,8 @@ function EditQuote(){
 
   const [pretext, setpreText] = useState('');
   const [preauthor, setpreAuthor] = useState('');
+  const [category, setCategory] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
     const [quote, setQuote] = useState('');
     const [author, setAuthor] = useState('');
@@ -19,6 +21,16 @@ function EditQuote(){
     useEffect(() => {
       loadBlog();
     }, []);
+
+    useEffect(() => {
+      loadCategory();
+    }, []);
+
+    const loadCategory = async () => {
+      let response = await getAllCategories();
+      // console.log(response.data.data);
+      setCategory(response.data.data);
+    };
 
     // useEffect(() => {
     // }, [quote]);
@@ -34,7 +46,8 @@ function EditQuote(){
     };
 
     const handleEditQuote = async () => {
-        let response = await editQuote(quote,author,id);
+      
+        let response = await editQuote(quote,author,id,selectedCategory);
 
         console.log(response);
         if (response.data.data.affectedRows >= 1) {
@@ -61,6 +74,21 @@ function EditQuote(){
           cols={50}
         />
       </div>
+
+      <div>
+            <label>Category:</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {category.map((w, index) => (
+                <option key={index} value={w.id}>
+                  {w.category}
+                </option>
+              ))}
+            </select>
+          </div><br/>
+
       <div>
         <label>Author:</label>
         <input

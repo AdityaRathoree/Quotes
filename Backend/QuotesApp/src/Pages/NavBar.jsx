@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {AccountCircle} from "@mui/icons-material";
-import { Dropdown } from "react-bootstrap";
+import {fetchImg } from "../Services/axiosapi";
+import {useSelector } from 'react-redux'
+import './NavBar.css';
 
 function NavBar() {
   const Navigate = useNavigate();
-
   const[isLoggedIn,setIsLoggedIn] = useState(false);
 
 useEffect(()=>{
@@ -33,10 +33,28 @@ useEffect(()=>{
     sessionStorage.removeItem("email");
     sessionStorage.removeItem("id");
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("contactNo");
+    sessionStorage.removeItem("createdDate");
     setIsLoggedIn(false);
     Navigate("/");
   };
 
+  const [imageURL, setImageURL] = useState('');
+  const tempURL = useSelector((state) => state.pic.status);
+
+  const fetchProfileImage = async () => {
+    const response = await fetchImg();
+    const imageUrl = URL.createObjectURL(response.data);
+    setImageURL(imageUrl);
+};
+
+useEffect(() => {
+  fetchProfileImage();
+},[]);
+
+useEffect(() => {
+  setImageURL(tempURL);
+},[tempURL]);
   
   return (
     <>
@@ -65,24 +83,32 @@ useEffect(()=>{
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-            <button className="nav-link" onClick={addQuote} style={{ backgroundColor: "transparent",color:"F6F6F2", border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Add Quotes</button>
+            <button className="nav-link" onClick={addQuote} style={{ backgroundColor: "transparent",color:"#000000", border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Add Quotes</button>
           </li>
           <li className="nav-item">
-            <button className="nav-link" onClick={myQuote} style={{ backgroundColor: "transparent",color:"F6F6F2", border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>My Quotes</button>
+            <button className="nav-link" onClick={myQuote} style={{ backgroundColor: "transparent",color:"#000000", border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>My Quotes</button>
           </li>
           <li className="nav-item">
-            <button className="nav-link" onClick={favQuote} style={{ backgroundColor: "transparent", color:"F6F6F2",border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Favourite Quotes</button>
+            <button className="nav-link" onClick={favQuote} style={{ backgroundColor: "transparent", color:"#000000",border: "none" }} onMouseEnter={(e) => e.target.style.backgroundColor = "#C0C0C0"} onMouseLeave={(e) => e.target.style.backgroundColor = "transparent"}>Favourite Quotes</button>
           </li>
               </ul>
 
               {isLoggedIn?
         <ul className="navbar-nav d-flex ms-auto order-5">
           <li className="nav-item">
-          <Link className="nav-link" style={{ backgroundColor: "transparent", color:"F6F6F2",border: "none" }} to='/profile'>Profile</Link>
+          <Link className="nav-link">
+          </Link>
           </li>
           <li className="nav-item">
-          {/* <Link className="nav-link" style={{ backgroundColor: "transparent", color:"white",border: "none" }} to='/'>Logout</Link> */}
-          <button className="nav-link" style={{ backgroundColor: "transparent", color:"F6F6F2",border: "none" }} onClick={()=>logoutUser()}>Logout</button>
+          <Link className="nav-link" style={{ backgroundColor: "transparent", color:"#000000",border: "none" }} to='/profile'>
+          <img
+                  style={{width:"30px",height:"30px",borderRadius:"30px", marginRight:"5px" }}
+                  src={imageURL}
+                  alt="ProfilePic"/>
+            Profile</Link>
+          </li>
+          <li className="nav-item">
+          <button className="nav-link" style={{ backgroundColor: "transparent", color:"#000000",border: "none" }} onClick={()=>logoutUser()}>Logout</button>
           </li>
         </ul>:""
       }

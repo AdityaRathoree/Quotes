@@ -1,4 +1,4 @@
-import axiosInstance from "./axiosinstance";
+import {axiosInstance,axiosInstanceUploadImg,axiosInstanceDispImg} from "./axiosinstance";
 import { log } from "./logger";
 import { toast } from "react-toastify";
 
@@ -30,16 +30,30 @@ export async function registerApi(email,firstName,lastName,contactNo,password){
 }
 
 // ADD QUOTE
-export async function addQuote(text,author){
+export async function addQuote(text,author,category_id){
     const user_id = sessionStorage.getItem("id");
-    const body = {user_id,text,author}
+    const body = {user_id,text,author,category_id}
+    console.log("addquoteAPI : "+category_id);
     return await handleRequest(()=>axiosInstance.post(`/quote/create`,body))
 }
 
+// EDIT USER
+export async function editUser(Fname,Lname,email,contactNo){
+    const id = sessionStorage.getItem("id");
+    const body = {id,firstName:Fname,lastName:Lname,email,contactNo};
+    return await handleRequest(()=>axiosInstance.put(`/user/updateUser`,body))
+}
+
+// GET USER BY ID
+export async function getUserById(){
+    const id = sessionStorage.getItem("id");
+    return await handleRequest(()=>axiosInstance.get(`/user/getUserById/${id}`))
+}
+
 // UPDATE BLOG
-export async function editQuote(quote,author,id){
+export async function editQuote(quote,author,id,category_id){
     const user_id = sessionStorage.getItem("id");
-    const body = {user_id,id,text:quote,author}
+    const body = {user_id,id,text:quote,author,category_id}
     return await handleRequest(()=>axiosInstance.put(`/quote/updateQuotes`,body))
 }
 
@@ -54,15 +68,18 @@ export async function getAllQuotes(){
     return await handleRequest(()=>axiosInstance.get(`/quote/getAllQuotes`))
 }
 
+//GET ALL CATEGORIES
+export async function getAllCategories(){
+    return await handleRequest(()=>axiosInstance.get(`/quote/getAllCategories`))
+}
+
 // GET MY QUOTES
 export async function getQuotesById(id){
-    console.log("id check : "+id)
     return await handleRequest(()=>axiosInstance.get(`/quote/getQuotesbyUser/${id}`))
 }
 
 // GET FAV QUOTES
 export async function getFavQuotesById(userId){
-    console.log("id check : "+userId)
     return await handleRequest(()=>axiosInstance.get(`/favquotes/getFavQuotes/${userId}`))
 }
 
@@ -91,3 +108,32 @@ export async function unlikeQuotes(quote_id){
 export async function likesCount(){
     return await handleRequest(()=>axiosInstance.get("/favquotes/likescount"));
 }
+
+//UPLOAD IMAGE
+export async function uploadImg(file){
+    const formData = new FormData();
+    formData.append('image', file);
+    const userId = sessionStorage.getItem("id");
+    return await handleRequest(()=>axiosInstanceUploadImg.post(`user/upload-profile-image/${userId}`,formData));
+}
+
+//FETCH IMAGE
+export async function fetchImg(){
+    const userId = sessionStorage.getItem("id");
+    return await handleRequest(()=>axiosInstanceDispImg.get(`user/profile-image/${userId}`));
+}
+
+//CHECK PASSWORD API
+export async function checkPasswordApi(email,password){
+    const body = {email,password}
+    return await handleRequest(()=>axiosInstance.post("/user/checkPassword",body));
+}
+
+//CHANGE PASSWORD API
+export async function changePasswordApi(password){
+    const userId = sessionStorage.getItem("id");
+    const body = {password};
+    return await handleRequest(()=>axiosInstance.put(`/user/change-password/${userId}`,body));
+}
+
+

@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken')
 const config = require('../config')
 const cryptoJs = require('crypto-js')
 const mailer = require('../mailer')
+const multer = require('multer');
+const upload = multer({ dest: 'uploads' })
 
 router.post('/register', (request, response) => {
   const req = request.body
@@ -66,6 +68,9 @@ router.post('/login',(request, response) => {
             lastName:user.lastName,
             email:user.email,
             id:user.id,
+            contactNo:user.contactNo,
+            createdDate:user.createdDate,
+            profileImage:user.profileImage,
             token:token,
           }))
         }
@@ -73,5 +78,91 @@ router.post('/login',(request, response) => {
     )
   }
 )
+
+router.post(
+  '/upload-profile-image/:userId',
+  upload.single('image'),
+  (request, response) => {
+    console.log("inside upload PROFILE");
+    const { userId } = request.params
+    const filename = request.file.filename
+    console.log("node code : "+userId+"..."+filename);
+    db.query(
+      `update user set profileImage = ? where id = ?`,
+      [filename, userId],
+      (error, result) => {
+        response.send(utils.createResult(error, result))
+      }
+    )
+  }
+)
+
+router.get('/profile-image/:userId', (request, response) => {
+  console.log("IMAGEPATH");
+  const { userId } = request.params;
+
+  db.query(
+    `select profileImage from user where id = ?`,
+    [userId],
+    (error, result) => {
+      console.log(result);
+      console.log(result[0].profileImage);
+      const imgcode = result[0].profileImage;
+      const imagePath = 'C:/Users/ratho/OneDrive/Desktop/My Workspace/Quotes App/Backend/Server/uploads/'+imgcode;
+      console.log("imagePath"+imagePath);
+      // response.send(utils.createResult(error, imagePath))
+      response.sendFile(imagePath);
+    }
+  )
+});
+
+router.put('/updateUser',(request, response) => {
+  const cred = request.body
+  console.log("EDIT USER : "+request.body);
+  db.query(
+    `update user set firstName=?, lastName=?, email=?, contactNo=? where id=?`,[cred.firstName,cred.lastName,cred.email,cred.contactNo,cred.id],
+    (error, result) => {
+      if(error==null)
+      response.send(utils.createResult(error, result))
+    })
+})
+
+router.get('/getUserById/:id',(request, response) => {
+  db.query(
+    `select firstName, lastName, email, contactNo from user where id=?`,[request.params.id],
+    (error, result) => {
+      response.send(utils.createResult(error, result))
+    })
+})
+
+router.post('/checkPassword',(request, response) => {
+  const cred = request.body
+  const encryptpassword = String(cryptoJs.SHA256(cred.password))
+  db.query(
+    `select * from user where email=? and password=?`,[cred.email, encryptpassword],
+    (error, result) => {
+      if(result.length == 0) {
+        response.send(utils.createResult("User does not exist"))
+      }else{
+        const user = result[0]
+        response.send(utils.createResult(error,user))
+      }
+    }
+  )
+}
+)
+
+router.put('/change-password/:userId', (request, response) => {
+  const { userId } = request.params
+  const { password } = request.body
+  const encryptedPassword = String(cryptoJs.SHA256(password))
+  db.query(
+    `update user set password = ? where id = ?`,
+    [encryptedPassword, userId],
+    (error, result) => {
+      response.send(utils.createResult(error, result))
+    }
+  )
+})
 
 module.exports = router
